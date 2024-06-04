@@ -25,11 +25,14 @@ const geoProperty = {
   count: 1,
 };
 
+let mesh_list = [];
+
 while (geoProperty.count <= 33) {
   const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
   const material = new THREE.MeshBasicMaterial({ color: 0x68feff });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(geoProperty.xPos, geoProperty.yPos, geoProperty.zPos);
+  mesh_list.push(mesh);
   scene.add(mesh);
 
   geoProperty.xPos += 0.2;
@@ -73,3 +76,18 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setClearColor(0x053aff);
 renderer.render(scene, camera);
+
+const clock = new THREE.Clock();
+const tick = () => {
+  const elapsedTime = clock.getElapsedTime();
+
+  mesh_list.forEach(function (mesh) {
+    mesh.rotation.y = elapsedTime;
+  });
+
+  renderer.render(scene, camera);
+
+  window.requestAnimationFrame(tick);
+};
+
+tick();
