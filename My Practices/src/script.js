@@ -9,6 +9,14 @@ const canvas = document.querySelector("canvas.webgl");
 // - A camera
 // - A renderer
 
+window.addEventListener("dblclick", () => {
+  if (!document.fullscreenElement) {
+    canvas.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
 // Scene
 const scene = new THREE.Scene();
 
@@ -45,9 +53,21 @@ while (geoProperty.count <= 33) {
  * Sizes
  */
 const sizes = {
-  width: 900,
-  height: 700,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
+
+const cursor = {
+  x: 0,
+  y: 0,
+};
+
+window.addEventListener("mousemove", (event) => {
+  // 0.5로 빼는건 값의 범위가 -0.5 ~ 0.5사이로 나타나게 할려고 하는 것임.
+  cursor.x = event.clientX / sizes.width - 0.5;
+  cursor.y = -(event.clientY / sizes.height - 0.5);
+  // console.log(event.clientX, event.clientY);
+});
 
 /**
  * Camera
@@ -81,6 +101,10 @@ const clock = new THREE.Clock();
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
+  camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 2;
+  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 2;
+  camera.position.y = cursor.y * 3;
+
   mesh_list.forEach(function (mesh) {
     mesh.rotation.y = elapsedTime;
   });
@@ -91,3 +115,16 @@ const tick = () => {
 };
 
 tick();
+
+window.addEventListener("resize", () => {
+  // Update sizes
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Update camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height);
+});
