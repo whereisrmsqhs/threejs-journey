@@ -24,7 +24,7 @@ for (let i = 0; i < count * 3 * 3; i++) {
 const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
 geometry.setAttribute("position", positionsAttribute);
 
-geometry.setAttribute("position", positionsAttribute);
+// geometry.setAttribute("position", positionsAttribute);
 
 const material = new THREE.MeshBasicMaterial({
   color: 0xff0000,
