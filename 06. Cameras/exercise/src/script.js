@@ -36,6 +36,8 @@ const mesh = new THREE.Mesh(
 scene.add(mesh);
 
 // Camera
+// PerspectiveCamera의 첫번째 인자는 field of view, 두번째 인자는 aspect of ratio이다.
+// 세번째는 near, 네번째는 far 인자이다. near과 far안에 있는 범위만 카메라에 의해 보여지게 되는거임.
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,

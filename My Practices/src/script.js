@@ -1,8 +1,19 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import GUI from "lil-gui";
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
+
+/**
+ * Debug
+ */
+const gui = new GUI({
+  width: 300,
+  title: "놀아보자",
+});
+gui.close();
+const debugObject = {};
 
 // 4 important elements to get started!
 // - A scene that contains
@@ -36,15 +47,64 @@ const geoProperty = {
 
 let mesh_list = [];
 
-while (geoProperty.count <= 100) {
-  for (let i = 0; i < 10; i++) {
-    for (let j = 0; j < 10; j++) {
+debugObject.color = "0x68feff";
+debugObject.subdivision = 2;
+const Xtweaks = gui.addFolder("x축 이동");
+const Ytweaks = gui.addFolder("y축 이동");
+const Ztweaks = gui.addFolder("z축 이동");
+const Wireframe = gui.addFolder("와이어프레임");
+const Subdivision = gui.addFolder("썹디비젼 (와이어프레임 체크 필요)");
+
+Xtweaks.close();
+Ytweaks.close();
+Ztweaks.close();
+Wireframe.close();
+Subdivision.close();
+
+while (geoProperty.count <= 4) {
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 2; j++) {
       const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
       const material = new THREE.MeshBasicMaterial({ color: 0x68feff });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(geoProperty.xPos, geoProperty.yPos, geoProperty.zPos);
       mesh_list.push(mesh);
       scene.add(mesh);
+
+      Xtweaks.add(mesh.position, "x")
+        .min(-5)
+        .max(5)
+        .step(0.01)
+        .name("elevation");
+
+      Ytweaks.add(mesh.position, "y")
+        .min(-5)
+        .max(5)
+        .step(0.01)
+        .name("elevation");
+
+      Ztweaks.add(mesh.position, "z")
+        .min(-5)
+        .max(5)
+        .step(0.01)
+        .name("elevation");
+
+      Wireframe.add(material, "wireframe");
+      Subdivision.add(debugObject, "subdivision")
+        .min(1)
+        .max(20)
+        .step(1)
+        .onFinishChange(() => {
+          mesh.geometry.dispose();
+          mesh.geometry = new THREE.BoxGeometry(
+            0.1,
+            0.1,
+            0.1,
+            debugObject.subdivision,
+            debugObject.subdivision,
+            debugObject.subdivision
+          );
+        });
 
       geoProperty.xPos += 0.2;
       geoProperty.count += 1;
@@ -95,8 +155,8 @@ control.enableDamping = true;
 /**
  * Axes Helper
  */
-const axesHelper = new THREE.AxesHelper(2);
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper(2);
+// scene.add(axesHelper);
 
 /**
  * Renderer
