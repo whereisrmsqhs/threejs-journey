@@ -2,6 +2,31 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
 
+/**
+ * Texture
+ */
+
+const loadManager = new THREE.LoadingManager();
+
+loadManager.onStart = () => {
+  console.log("onStart");
+};
+loadManager.onError = () => {
+  console.log("onError");
+};
+
+const textureLoader = new THREE.TextureLoader(loadManager);
+const colorTexture1 = textureLoader.load("/textures/minecraft.png");
+const colorTexture2 = textureLoader.load("/textures/minecraft1.jpg");
+const colorTexture3 = textureLoader.load("/textures/minecraft2.jpg");
+
+colorTexture1.generateMipmaps = false;
+colorTexture1.magFilter = THREE.NearestFilter;
+colorTexture2.generateMipmaps = false;
+colorTexture2.magFilter = THREE.NearestFilter;
+colorTexture3.generateMipmaps = false;
+colorTexture3.magFilter = THREE.NearestFilter;
+
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
@@ -61,11 +86,17 @@ Ztweaks.close();
 Wireframe.close();
 Subdivision.close();
 
+let texture;
+
 while (geoProperty.count <= 4) {
   for (let i = 0; i < 2; i++) {
     for (let j = 0; j < 2; j++) {
       const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-      const material = new THREE.MeshBasicMaterial({ color: 0x68feff });
+
+      if (i == 0 && j == 0) texture = colorTexture1;
+      else if (i == 0 && j == 1) texture = colorTexture2;
+      else texture = colorTexture3;
+      const material = new THREE.MeshBasicMaterial({ map: texture });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(geoProperty.xPos, geoProperty.yPos, geoProperty.zPos);
       mesh_list.push(mesh);
